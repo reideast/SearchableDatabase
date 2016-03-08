@@ -1,0 +1,116 @@
+/*	For reference, all fields of the monster table:
+	+---------------+---------------------+------+-----+---------+----------------+
+	| Field         | Type                | Null | Key | Default | Extra          |
+	+---------------+---------------------+------+-----+---------+----------------+
+	| monster_id    | int(10) unsigned    | NO   | PRI | NULL    | auto_increment |
+	| monster_name  | varchar(50)         | NO   |     | NULL    |                |
+	| header_group  | varchar(30)         | YES  |     | NULL    |                |
+	| size_category | varchar(10)         | YES  |     | NULL    |                |
+	| origin        | varchar(15)         | YES  |     | NULL    |                |
+	| type_category | varchar(15)         | YES  |     | NULL    |                |
+	| level_number  | tinyint(3) unsigned | YES  |     | NULL    |                |
+	| role          | varchar(10)         | YES  |     | NULL    |                |
+	| exp_value     | int(11)             | YES  |     | NULL    |                |
+	| elite_flag    | tinyint(3)          | YES  |     | NULL    |                |
+	| solo_flag     | tinyint(4)          | YES  |     | NULL    |                |
+	| leader_flag   | tinyint(4)          | YES  |     | NULL    |                |
+	| book_found_in | varchar(20)         | YES  |     | NULL    |                |
+	| page          | int(11)             | YES  |     | NULL    |                |
+	+---------------+---------------------+------+-----+---------+----------------+
+*/					
+
+**************************************************************************************					
+					<div>Level: <input type="text" name="level_number" id="level_number" onchange="calcEXP()" size="3" maxlength="3" <?php echo (isset($errors['level_number'])) ? 'class="errorInput"' : ''; ?> value="<?php echo (isset($formValues['level_number'])) ? $formValues['level_number'] : '';?>" tabindex="<?php echo $tabStopSequence++; ?>" /></div>
+					<div style="margin-top:8px">
+						<div><input type="checkbox" name="elite_flag" id="elite_flag" onchange="calcEXP()" value="1" id="elite_flag" <?php echo (isset($formValues['elite_flag']) && ($formValues['elite_flag'] == 1)) ? ' checked' : '';?> tabindex="<?php echo $tabStopSequence++; ?>" /><label for="elite_flag">Elite</label></div>
+						<div><input type="checkbox" name="solo_flag" id="solo_flag" onchange="calcEXP()" value="1" id="solo_flag" <?php echo (isset($formValues['solo_flag']) && ($formValues['solo_flag'] == 1)) ? ' checked' : '';?> tabindex="<?php echo $tabStopSequence++; ?>" /><label for="solo_flag">Solo</label></div>
+						<div><input type="checkbox" name="leader_flag" id="leader_flag" value="1" id="leader_flag" <?php echo (isset($formValues['leader_flag']) && ($formValues['leader_flag'] == 1)) ? ' checked' : '';?> tabindex="<?php echo $tabStopSequence++; ?>" /><label for="leader_flag">Leader</label></div>
+					</div>
+					<div>Exp: <input type="text" name="exp_value" id="exp_value" size="5" maxlength="11" <?php echo (isset($errors['exp_value'])) ? 'class="errorInput"' : ''; ?> value="<?php echo (isset($formValues['exp_value'])) ? $formValues['exp_value'] : '';?>" tabindex="<?php echo $tabStopSequence++; ?>" /></div>
+					<div style="font-size: 0.7em;"><a href="#" id="lockOrUnlockEXP" onClick="toggleManualEdit()" tabindex="120">Manual Edit</a></div>
+
+					
+<div align="center" id="containsFormSubmit">
+	<input type="submit" name="submitted" class="styledButton" value="Insert Monster" tabindex="<?php echo $tabStopSequence++; ?>" />
+</div>
+
+	<div id="finalEditRow">
+		<div style="display:table; margin-left:auto; margin-right:auto;"><input type="submit" name="submitted" class="styledButton" value="Insert Monster" tabindex="<?php echo $tabStopSequence++; ?>" /></div>
+	</div>
+
+
+**************************************************************************************
+	
+UNUSED FONT FAMILIES:
+	
+@font-face {
+	font-family:Goodfish;
+	src:local("Goodfish-Regular"),
+		local("Goodfish Regular"),
+		url("fonts/goodfish.otf") format("opentype");
+}
+@font-face {
+	font-family:Goodfish;
+	src:local("Goodfish-Italic"),
+		local("Goodfish Italic"),
+		url("fonts/goodfish it.otf") format("opentype");
+	font-style:italic;
+}
+@font-face {
+	font-family:Goodfish;
+	src:local("Goodfish-Bold"),
+		local("Goodfish Bold"),
+		url("fonts/goodfish bd.otf") format("opentype");
+	font-weight:bold;
+}
+@font-face {
+	font-family:Goodfish;
+	src:local("Goodfish-BoldItalic"),
+		local("Goodfish Bold Italic"),
+		url("fonts/goodfish bd it.otf") format("opentype");
+	font-weight:bold;
+	font-style:italic;
+}
+
+@font-face {
+	font-family:Vinque;
+	src:local("Vinque-Regular"),
+		local("Vinque Regular"),
+		url("fonts/vinque.otf") format("opentype");
+}
+**************************************************************************************
+<p style="display:none;">The title font, <strong>Goodfish</strong>, is released by Ray Larabie, <a href="http://www.larabiefonts.com/">http://www.larabiefonts.com/</a> under a free license for private and commercial use, and is distributed via <a href="http://www.myfonts.com/browse/foundry/larabie/">MyFonts.com</a> under license agreement from Ray Larabie.</p>
+
+**************************************************************************************
+/* 	No longer valid, since I installed win7 on both:
+	//determine password for my laptop vs. desktop
+	if (eregi("Windows NT 6.0", $_SERVER['HTTP_USER_AGENT']))
+		DEFINE ('DB_PASSWORD', 'password'); //echo "windows vista";
+	elseif (eregi("Windows NT 6.1", $_SERVER['HTTP_USER_AGENT']))
+		 DEFINE ('DB_PASSWORD', ''); //echo "windows 7 RC";
+	else
+		DEFINE ('DB_PASSWORD', '');//echo "other OS"; */
+
+**************************************************************************************
+
+	$query_string .= ' WHERE isDeleted = 0'; //only not-deleted monsters
+	
+	$isFirstSearchTerm = true; //to see if we need AND in each search term
+	
+	if (!empty($_REQUEST['monster_name']))
+	{
+		//add AND iff not the first term
+		if ($isFirstSearchTerm)
+		{
+			$isFirstSearchTerm = false;
+			$query_string .= ' WHERE';
+		}
+		else
+			$query_string .= ' AND';
+
+		$query_string .= ' monster_name LIKE "%' . mysqli_real_escape_string($dbc, strtolower(trim($_REQUEST['monster_name']))) . '%"';
+	}
+
+**************************************************************************************
+
+

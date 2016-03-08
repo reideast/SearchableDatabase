@@ -1,0 +1,23 @@
+notes:
+
+keywords with 0 cross references
+acid (damage)
+teleportation (damage)
+acid (creature)
+air (creature)
+
+search all for burrow
+add in "swimming" ????
+
+search for "Weapon" to find martial monsters
+
+
+steps to add monster keywords:
+copy directly book keywords
+copy directly movement modes (fly, burrow, teleport)
+copy directly damage types from powers (cold, fire, necrotic, healing, ...)
+(optional:)
+evaluate race of creature (human, dwarf, dragon, ...)
+evaluate type of creature (undead, insectoid, 
+evaluate elemental origin (look at resistances, aura) (air, earth, cold, fire, or water)
+evaluate power source, only if it fits really well
